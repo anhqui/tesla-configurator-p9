@@ -5,6 +5,15 @@ const interiorColorSection = document.querySelector("#interior-buttons");
 const exteriorImage = document.querySelector("#exterior-image");
 const interiorImage = document.querySelector("#interior-image");
 
+const wheelButtonsSection = document.querySelector("#wheel-buttons");
+
+let selectedColor = "Stealth Grey";
+const selectedOptions = {
+  "Performance Wheels": false,
+  "Performance Package": false,
+  "Full Self-Driving": false,
+};
+
 // Handle Top Bar On Scroll
 const handleScroll = () => {
   const atTop = window.scrollY === 0;
@@ -43,8 +52,9 @@ const handleColorButtonClick = (e) => {
   }
   // Change exterior image
   if (e.currentTarget === exteriorColorSection) {
-    const color = button.querySelector("img").alt;
-    exteriorImage.src = exteriorImages[color];
+    selectedColor = button.querySelector("img").alt;
+    // exteriorImage.src = exteriorImages[color];
+    updateExteriorImage();
   }
 
   // Change interior image
@@ -54,7 +64,38 @@ const handleColorButtonClick = (e) => {
   }
 };
 
+// Update exterior image based on color and wheels
+const updateExteriorImage = () => {
+  const performanceSuffix = selectedOptions["Performance Wheels"]
+    ? "-performance"
+    : "";
+  const colorKey =
+    selectedColor in exteriorImages ? selectedColor : "Stealth Grey";
+  exteriorImage.src = exteriorImages[colorKey].replace(
+    ".jpg",
+    `${performanceSuffix}.jpg`
+  );
+};
+
+// Wheel Selection
+const handleWheelButtonClick = (event) => {
+  if (event.target.tagName === "BUTTON") {
+    const buttons = document.querySelectorAll("#wheel-buttons button");
+    buttons.forEach((btn) => btn.classList.remove("bg-gray-700", "text-white"));
+    event.target.classList.add("bg-gray-700", "text-white");
+    // const selectedWheel = event.target.textContent.includes("Performance");
+    // exteriorImage.src = selectedWheel
+    //   ? "./images/model-y-stealth-grey-performance.jpg"
+    //   : "./images/model-y-stealth-grey.jpg";
+
+    selectedOptions["Performance Wheels"] =
+      event.target.textContent.includes("Performance");
+    updateExteriorImage();
+  }
+};
+
 // Event Listeners
 window.addEventListener("scroll", () => requestAnimationFrame(handleScroll));
 exteriorColorSection.addEventListener("click", handleColorButtonClick);
 interiorColorSection.addEventListener("click", handleColorButtonClick);
+wheelButtonsSection.addEventListener("click", handleWheelButtonClick);

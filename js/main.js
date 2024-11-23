@@ -4,14 +4,57 @@ const exteriorColorSection = document.querySelector("#exterior-buttons");
 const interiorColorSection = document.querySelector("#interior-buttons");
 const exteriorImage = document.querySelector("#exterior-image");
 const interiorImage = document.querySelector("#interior-image");
-
 const wheelButtonsSection = document.querySelector("#wheel-buttons");
+const performanceBtn = document.querySelector("#performance-btn");
+const totalPriceElement = document.querySelector("#total-price");
+const fullSelfDrivingCheckbox = document.querySelector(
+  "#full-self-driving-checkbox"
+);
+
+const basePrice = 52490;
+let currentPrice = basePrice;
 
 let selectedColor = "Stealth Grey";
 const selectedOptions = {
   "Performance Wheels": false,
   "Performance Package": false,
   "Full Self-Driving": false,
+};
+
+const pricing = {
+  "Performance Wheels": 2500,
+  "Performance Package": 5000,
+  "Full Self-Driving": 8500,
+  Accessories: {
+    "Center Console Trays": 35,
+    Sunshade: 105,
+    "All-Weather Interior Liners": 225,
+  },
+};
+
+// Update total price in the UI
+
+const updateTotalPrice = () => {
+  // Rest the current price to base price
+  currentPrice = basePrice;
+
+  // Performance Wheel Option
+  if (selectedOptions["Performance Wheels"]) {
+    currentPrice += pricing["Performance Wheels"];
+  }
+
+  // Performance Package Option
+  if (selectedOptions["Performance Package"]) {
+    currentPrice += pricing["Performance Package"];
+  }
+
+  // Full Self Driving Option
+  if (selectedOptions["Full Self-Driving"]) {
+    currentPrice += pricing["Full Self-Driving"];
+  }
+
+  // Update the total price in UI
+  totalPriceElement.textContent = `$${currentPrice.toLocaleString()}`;
 };
 
 // Handle Top Bar On Scroll
@@ -83,15 +126,28 @@ const handleWheelButtonClick = (event) => {
     const buttons = document.querySelectorAll("#wheel-buttons button");
     buttons.forEach((btn) => btn.classList.remove("bg-gray-700", "text-white"));
     event.target.classList.add("bg-gray-700", "text-white");
-    // const selectedWheel = event.target.textContent.includes("Performance");
-    // exteriorImage.src = selectedWheel
-    //   ? "./images/model-y-stealth-grey-performance.jpg"
-    //   : "./images/model-y-stealth-grey.jpg";
-
     selectedOptions["Performance Wheels"] =
       event.target.textContent.includes("Performance");
     updateExteriorImage();
+    updateTotalPrice();
   }
+};
+
+// Performance Package Selection
+const handlePerformanceButtonClick = () => {
+  const isSelected = performanceBtn.classList.toggle("bg-gray-700");
+  performanceBtn.classList.toggle("text-white");
+
+  // Update selected options
+  selectedOptions["Performance Package"] = isSelected;
+  updateTotalPrice();
+};
+
+// Full Self Driving Selection
+const fullSelfDrivingChange = () => {
+  const isSelected = fullSelfDrivingCheckbox.checked;
+  selectedOptions["Full Self-Driving"] = isSelected;
+  updateTotalPrice();
 };
 
 // Event Listeners
@@ -99,3 +155,5 @@ window.addEventListener("scroll", () => requestAnimationFrame(handleScroll));
 exteriorColorSection.addEventListener("click", handleColorButtonClick);
 interiorColorSection.addEventListener("click", handleColorButtonClick);
 wheelButtonsSection.addEventListener("click", handleWheelButtonClick);
+performanceBtn.addEventListener("click", handlePerformanceButtonClick);
+fullSelfDrivingCheckbox.addEventListener("click", fullSelfDrivingChange);
